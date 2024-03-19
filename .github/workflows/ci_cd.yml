@@ -9,7 +9,7 @@ on:
 env:
   ECR_REPOSITORY: "point-management-service"
   ECS_CLUSTER: "point-management-cluster"
-  ECS_SERVICE: "management-service"
+  ECS_SERVICE: "point-management-service"
   ECS_TASK: "point-management-task"
 
 jobs:
