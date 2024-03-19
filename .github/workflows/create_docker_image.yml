@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 env:
-  ECR_REPOSITORY: "point-registration-app"
+  ECR_REPOSITORY: "point-management-service"
 
 jobs:
   build-and-tests:
