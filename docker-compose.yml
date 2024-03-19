@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+
+  database:
+    image: mongo
+    container_name: point_registration_database
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      TZ: 'America/Sao_Paulo'
+      MONGO_INITDB_DATABASE: ${DB_NAME}
+      MONGO_INITDB_ROOT_USERNAME: ${DB_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - ./tmp/database:/data/db
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - point_registration_network
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: point_registration_app:latest
+    container_name: point_registration_app
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env.docker
+    depends_on:
+      database:
+        condition: service_healthy #inicia o container do app só quando o database disser que está healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl http://localhost:3000/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+    networks:
+      - point_registration_network
+    profiles:
+      - all
+
+networks:
+  point_registration_network:
+    driver: bridge
