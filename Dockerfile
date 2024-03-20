@@ -15,7 +15,7 @@ RUN npm ci --only=production && npm cache clean --force
 USER node
 
 FROM node:18.17-bookworm AS production
-RUN apt update && apt install --no-cache dumb-init curl
+RUN apt update && apt install dumb-init curl -y
 ENV NODE_ENV production
 COPY --chown=node:node --from=build /usr/src/app/node_modules ./node_modules
 COPY --chown=node:node --from=build /usr/src/app/dist ./dist
