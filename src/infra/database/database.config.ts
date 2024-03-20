@@ -16,17 +16,6 @@ export class DatabaseConfig implements TypeOrmOptionsFactory {
       };
     }
 
-    if (this.configService.get('DB_URL')) {
-      return {
-        type: 'mongodb',
-        url: this.configService.get('DB_URL'),
-        authSource: 'admin',
-        database: this.configService.get('DB_NAME'),
-        synchronize: this.boolean(this.configService.get('DB_SYNCHRONIZE')),
-        entities: [__dirname + './../**/*.entity{.ts,.js}'],
-      };
-    }
-
     return {
       type: 'mongodb',
       host: this.configService.get('DB_HOST'),
