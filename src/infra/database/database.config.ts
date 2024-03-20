@@ -36,6 +36,7 @@ export class DatabaseConfig implements TypeOrmOptionsFactory {
       authSource: 'admin',
       database: this.configService.get('DB_NAME'),
       synchronize: this.boolean(this.configService.get('DB_SYNCHRONIZE')),
+      retryWrites: false,
       entities: [__dirname + './../**/*.entity{.ts,.js}'],
     };
   }
