@@ -13,8 +13,10 @@ async function bootstrap() {
   app.useGlobalFilters(new RestExceptionFilter());
 
   const config = new DocumentBuilder()
-    .setTitle('Point Registration App')
-    .setDescription('Esta API expõe endpoints responsáveis pelos pontos')
+    .setTitle('Point Management App')
+    .setDescription(
+      'Esta API expõe endpoints responsáveis pelo gerenciamento de registro de ponto',
+    )
     .setVersion('1.0')
     .addBearerAuth()
     .build();
