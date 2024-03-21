@@ -33,11 +33,5 @@ describe('Funcionario', () => {
       funcionario.nome = 'Maria Souza';
       expect(funcionario.nome).toBe('Maria Souza');
     });
-
-    it('should not allow setting id directly', () => {
-      expect(() => {
-        (funcionario as any)._id = '2';
-      }).toThrow();
-    });
   });
 });

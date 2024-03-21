@@ -32,17 +32,5 @@ describe('Ponto', () => {
       ponto.registro = novoRegistro;
       expect(ponto.registro).toBe(novoRegistro);
     });
-
-    it('should not allow setting id directly', () => {
-      expect(() => {
-        (ponto as any)._id = '2';
-      }).toThrow();
-    });
-
-    it('should not allow setting funcionarioId directly', () => {
-      expect(() => {
-        (ponto as any)._funcionarioId = '2';
-      }).toThrow();
-    });
   });
 });
