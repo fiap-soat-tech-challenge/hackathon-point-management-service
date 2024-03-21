@@ -1,4 +1,4 @@
-import { Funcionario } from './Funcionario';
+import { Funcionario } from './funcionario';
 
 describe('Funcionario', () => {
   describe('constructor', () => {
