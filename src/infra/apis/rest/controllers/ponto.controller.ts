@@ -72,7 +72,7 @@ export class PontoController {
       data,
       this.FUNCIONARIO_ID,
     );
-    return pontos.map((ponto) => new PontoPresenter(ponto));
+    return pontos.map((ponto) => new PontoPresenter(ponto, true));
   }
 
   /*

@@ -97,7 +97,7 @@ export class Ponto {
         this.adicionarSaida();
         break;
     }
-    // this.atualizarTotalHorasTrabalhadas();
+    this.atualizarTotalHorasTrabalhadas();
   }
 
   private adicionarIntervalo(): void {
@@ -132,12 +132,27 @@ export class Ponto {
   }
 
   private atualizarTotalHorasTrabalhadas(): void {
-    // const totalHoras = this._turnos.reduce(
-    //   (acc, turno) => acc + turno.totalHorasTrabalhadas,
-    //   0,
-    // );
-    // const horas = Math.floor(totalHoras / 60);
-    // const minutos = totalHoras % 60;
-    // this._totalHorasTrabalhadas = `${horas}:${minutos}`;
+    // if (!this._saida && this._intervalos.length === 0) {
+    //   return;
+    // }
+    //
+    // let totalDeIntervalos = 0;
+    // this._intervalos
+    //   .filter((intervalo) => intervalo.foiFinalizado())
+    //   .forEach(() => {
+    //     totalDeIntervalos++;
+    //   });
+    //
+    // const diff = this._saida?.getTime() - this._entrada.getTime();
+    // if (!diff) {
+    //   return;
+    // }
+    //
+    // const totalMinutes = Math.floor(diff / 60000);
+    // const hours = Math.floor(totalMinutes / 60);
+    // const minutes = totalMinutes % 60;
+    // this._totalHorasTrabalhadas = `${hours.toString().padStart(2, '0')}:${minutes
+    //   .toString()
+    //   .padStart(2, '0')}`;
   }
 }

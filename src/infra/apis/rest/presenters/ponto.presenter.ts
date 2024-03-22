@@ -28,7 +28,7 @@ export class PontoPresenter {
   @ApiProperty({ example: '08:00' })
   totalHorasTrabalhadas: string;
 
-  constructor(ponto: Ponto) {
+  constructor(ponto: Ponto, mostrarHorasTrabalhadas: boolean = false) {
     this.id = ponto.id;
     this.funcionarioId = ponto.funcionarioId;
     this.data = ponto.data.toISOString().split('T')[0];
@@ -49,6 +49,8 @@ export class PontoPresenter {
       this.saida = null;
     }
 
-    this.totalHorasTrabalhadas = ponto.totalHorasTrabalhadas;
+    if (mostrarHorasTrabalhadas) {
+      this.totalHorasTrabalhadas = ponto.totalHorasTrabalhadas;
+    }
   }
 }
