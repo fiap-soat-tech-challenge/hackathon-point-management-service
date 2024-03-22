@@ -1,7 +1,8 @@
 import { Ponto } from '../model/ponto';
 
 export interface PontoRepository {
-  getPontoById(id: string): Promise<Ponto | null>;
-  updatePonto(pontoId: string, ponto: Ponto): Promise<Ponto | void>;
-  savePonto(ponto: Ponto): Promise<Ponto>;
+  getPonto(funcionarioId: string, data: Date): Promise<Ponto>;
+  getAllPontosData(data: Date, funcionarioId: string): Promise<Array<Ponto>>;
+  save(ponto: Ponto): Promise<Ponto>;
+  update(ponto: Ponto): Promise<void>;
 }

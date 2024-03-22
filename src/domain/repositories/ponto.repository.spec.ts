@@ -8,7 +8,7 @@ describe('PontoRepository', () => {
     pontoRepository = {
       getPontoById: jest.fn(),
       updatePonto: jest.fn(),
-      savePonto: jest.fn(),
+      save: jest.fn(),
     };
   });
 
@@ -27,8 +27,8 @@ describe('PontoRepository', () => {
   });
 
   it('should have savePonto method', () => {
-    expect(pontoRepository.savePonto).toBeDefined();
-    expect(typeof pontoRepository.savePonto).toBe('function');
+    expect(pontoRepository.save).toBeDefined();
+    expect(typeof pontoRepository.save).toBe('function');
   });
 
   describe('getPontoById', () => {
@@ -56,9 +56,9 @@ describe('PontoRepository', () => {
   describe('savePonto', () => {
     it('should return a Promise that resolves to Ponto', async () => {
       const pontoToSave = new Ponto('1', new Date());
-      pontoRepository.savePonto = jest.fn().mockResolvedValue(pontoToSave);
+      pontoRepository.save = jest.fn().mockResolvedValue(pontoToSave);
 
-      const result = await pontoRepository.savePonto(pontoToSave);
+      const result = await pontoRepository.save(pontoToSave);
       expect(result).toEqual(pontoToSave);
     });
   });

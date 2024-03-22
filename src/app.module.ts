@@ -5,6 +5,7 @@ import { HealthModule } from './infra/health/health.module';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DatabaseConfig } from './infra/database/database.config';
+import { RepositoriesModule } from './infra/repositories/repositories.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { DatabaseConfig } from './infra/database/database.config';
       useClass: DatabaseConfig,
     }),
     RestModule,
+    RepositoriesModule,
     UseCasesProxyModule,
     HealthModule,
   ],

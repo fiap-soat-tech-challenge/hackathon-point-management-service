@@ -1,31 +1,45 @@
 export class Funcionario {
   private readonly _id: string | null;
-  private _cpf: string;
-  private _nome: string;
+  private readonly _nome: string;
+  private readonly _username: string;
+  private readonly _matricula: string;
 
-  constructor(cpf: string, nome: string, id?: string) {
-    this._id = id || null;
-    this._cpf = cpf;
-    this._nome = nome;
+  constructor(nome: string, username: string, matricula: string);
+
+  constructor(
+    id: string,
+    nome: string,
+    cpf: string,
+    username: string,
+    matricula: string,
+  );
+
+  public constructor(...params: any[]) {
+    if (params.length === 2) {
+      this._nome = params[0];
+      this._username = params[1];
+      this._matricula = params[2];
+      return;
+    }
+    this._id = params[0];
+    this._nome = params[1];
+    this._username = params[2];
+    this._matricula = params[3];
   }
 
   get id(): string | null {
     return this._id;
   }
 
-  get cpf(): string {
-    return this._cpf;
-  }
-
   get nome(): string {
     return this._nome;
   }
 
-  set cpf(cpf: string) {
-    this._cpf = cpf;
+  get username(): string {
+    return this._username;
   }
 
-  set nome(nome: string) {
-    this._nome = nome;
+  get matricula(): string {
+    return this._matricula;
   }
 }
