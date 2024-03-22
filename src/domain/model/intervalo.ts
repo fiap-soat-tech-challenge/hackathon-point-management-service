@@ -10,7 +10,7 @@ export class Intervalo {
   constructor(...params: any[]) {
     switch (params.length) {
       case 0:
-        this._inicio = new Date(2024, 2, 21, 12, 0);
+        this._inicio = new Date();
         this._tempo = '00:00';
         return;
       default:
@@ -37,7 +37,7 @@ export class Intervalo {
   }
 
   public finalizar(): void {
-    this._fim = new Date(2024, 2, 21, 12, 30);
+    this._fim = new Date();
     this.atualizarTempoIntervalo();
   }
 

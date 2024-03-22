@@ -132,27 +132,59 @@ export class Ponto {
   }
 
   private atualizarTotalHorasTrabalhadas(): void {
-    // if (!this._saida && this._intervalos.length === 0) {
-    //   return;
-    // }
-    //
-    // let totalDeIntervalos = 0;
-    // this._intervalos
-    //   .filter((intervalo) => intervalo.foiFinalizado())
-    //   .forEach(() => {
-    //     totalDeIntervalos++;
-    //   });
-    //
-    // const diff = this._saida?.getTime() - this._entrada.getTime();
-    // if (!diff) {
-    //   return;
-    // }
-    //
-    // const totalMinutes = Math.floor(diff / 60000);
-    // const hours = Math.floor(totalMinutes / 60);
-    // const minutes = totalMinutes % 60;
-    // this._totalHorasTrabalhadas = `${hours.toString().padStart(2, '0')}:${minutes
-    //   .toString()
-    //   .padStart(2, '0')}`;
+    if (!this._saida && this._intervalos.length === 0) {
+      return;
+    }
+
+    let totalMinutosTrabalhados = 0;
+    if (this._saida) {
+      totalMinutosTrabalhados = this.atualizarTotalHorasFinal();
+    } else {
+      totalMinutosTrabalhados = this.atualizarTotalHorasParcial();
+    }
+
+    const horas = Math.floor(totalMinutosTrabalhados / 60);
+    const minutos = Math.round(totalMinutosTrabalhados % 60);
+    this._totalHorasTrabalhadas = `${horas.toString().padStart(2, '0')}:${minutos.toString().padStart(2, '0')}`;
+  }
+
+  private atualizarTotalHorasFinal(): number {
+    let totalMinutosTrabalhados = 0;
+    totalMinutosTrabalhados = this.calcularMinutos(this._saida, this._entrada);
+
+    this._intervalos
+      .filter((intervalo) => intervalo.foiFinalizado())
+      .forEach((intervalo) => {
+        totalMinutosTrabalhados -= this.calcularMinutos(
+          intervalo.fim,
+          intervalo.inicio,
+        );
+      });
+
+    return totalMinutosTrabalhados;
+  }
+
+  private atualizarTotalHorasParcial(): number {
+    let totalMinutosTrabalhados = 0;
+
+    this._intervalos.forEach((intervalo, index) => {
+      if (index === 0) {
+        totalMinutosTrabalhados += this.calcularMinutos(
+          intervalo.inicio,
+          this._entrada,
+        );
+      } else {
+        totalMinutosTrabalhados += this.calcularMinutos(
+          intervalo.inicio,
+          this._intervalos[index - 1].fim,
+        );
+      }
+    });
+
+    return totalMinutosTrabalhados;
+  }
+
+  private calcularMinutos(momentoFinal: Date, momentoInicial: Date) {
+    return (momentoFinal.getTime() - momentoInicial.getTime()) / (1000 * 60);
   }
 }
