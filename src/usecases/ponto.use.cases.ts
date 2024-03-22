@@ -2,9 +2,14 @@ import { Ponto } from '../domain/model/ponto';
 import { PontoRepository } from '../domain/repositories/ponto.repository';
 import { Evento } from '../domain/model/evento';
 import { PontoInvalidoException } from '../domain/exceptions/ponto.invalido.exception';
+import { RelatorioSenderService } from '../domain/services/relatorio-sender.service';
+import { Funcionario } from '../domain/model/funcionario';
 
 export class PontoUseCases {
-  constructor(private readonly pontoRepository: PontoRepository) {}
+  constructor(
+    private readonly pontoRepository: PontoRepository,
+    private readonly relatorioSenderService: RelatorioSenderService,
+  ) {}
 
   async addPonto(funcionarioId: string, evento: Evento): Promise<Ponto> {
     let ponto = await this.getPonto(funcionarioId);
@@ -42,6 +47,27 @@ export class PontoUseCases {
       this.getDataOfString(data),
       funcionarioId,
     );
+  }
+
+  async relatorioMensal(
+    funcionarioId: string,
+    mes: number,
+    ano: number,
+  ): Promise<void> {
+    const relatorio = await this.pontoRepository.getAllPontosByMesAno(
+      funcionarioId,
+      mes - 1,
+      ano,
+    );
+
+    // TODO: Arrumar funcionario
+    const funcionario = new Funcionario(
+      'Ana da Silva',
+      'ana.silva',
+      '123',
+      'ana.silva@email.com',
+    );
+    await this.relatorioSenderService.send(funcionario, relatorio);
   }
 
   private getDataComHoraFixa(): Date {
