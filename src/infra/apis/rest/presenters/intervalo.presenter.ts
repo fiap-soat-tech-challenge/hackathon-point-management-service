@@ -1,24 +1,44 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Turno } from '../../../../domain/model/turno';
 import { Intervalo } from '../../../../domain/model/intervalo';
 
 export class IntervaloPresenter {
-  @ApiProperty({ example: '2024-03-21 12:00' })
-  readonly dataHoraInicio: string;
-  @ApiProperty({ example: '2024-03-21 13:00' })
-  readonly dataHoraFim: string | null;
+  @ApiProperty({
+    example: {
+      inicio: {
+        data: '2024-03-21',
+        hora: '12:00',
+      },
+    },
+  })
+  readonly dataHoraInicio: any;
+
+  @ApiProperty({
+    example: {
+      fim: {
+        data: '2024-03-21',
+        hora: '13:00',
+      },
+    },
+  })
+  readonly dataHoraFim: any | null;
+
   @ApiProperty({ example: '01:00' })
   readonly tempoDoIntervalo: string;
 
   constructor(intervalo: Intervalo) {
-    this.dataHoraInicio = intervalo.inicio
-      .toISOString()
-      .split('.')[0]
-      .slice(0, -3);
+    this.dataHoraInicio = {
+      data: intervalo.inicio.toISOString().split('T')[0],
+      hora: intervalo.inicio.toISOString().split('T')[1].slice(0, -8),
+    };
 
-    this.dataHoraFim = intervalo.fim
-      ? intervalo.fim.toISOString().split('.')[0].slice(0, -3)
-      : null;
+    if (intervalo.fim) {
+      this.dataHoraFim = {
+        data: intervalo.fim.toISOString().split('T')[0],
+        hora: intervalo.fim.toISOString().split('T')[1].slice(0, -8),
+      };
+    } else {
+      this.dataHoraFim = null;
+    }
 
     this.tempoDoIntervalo = intervalo.tempo;
   }

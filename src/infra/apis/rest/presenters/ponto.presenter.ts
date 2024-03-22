@@ -9,12 +9,22 @@ export class PontoPresenter {
   funcionarioId: string;
   @ApiProperty({ example: '2024-03-21' })
   data: string;
-  @ApiProperty({ example: '2024-03-21 08:00' })
-  entrada: string;
+  @ApiProperty({
+    example: {
+      data: '2024-03-21',
+      hora: '12:00',
+    },
+  })
+  entrada: any;
   @ApiProperty({ type: [IntervaloPresenter] })
   intervalos: Array<IntervaloPresenter>;
-  @ApiProperty({ example: '2024-03-21 17:00' })
-  saida: string;
+  @ApiProperty({
+    example: {
+      data: '2024-03-21',
+      hora: '12:00',
+    },
+  })
+  saida: any;
   @ApiProperty({ example: '08:00' })
   totalHorasTrabalhadas: string;
 
@@ -22,11 +32,23 @@ export class PontoPresenter {
     this.id = ponto.id;
     this.funcionarioId = ponto.funcionarioId;
     this.data = ponto.data.toISOString().split('T')[0];
-    this.entrada = ponto.entrada.toISOString();
+    this.entrada = {
+      data: ponto.entrada.toISOString().split('T')[0],
+      hora: ponto.entrada.toISOString().split('T')[1].slice(0, -8),
+    };
     this.intervalos = ponto.intervalos.map(
       (intervalo) => new IntervaloPresenter(intervalo),
     );
-    this.saida = ponto.saida ? ponto.saida.toISOString() : null;
+
+    if (ponto.saida) {
+      this.saida = {
+        data: ponto.saida.toISOString().split('T')[0],
+        hora: ponto.saida.toISOString().split('T')[1].slice(0, -8),
+      };
+    } else {
+      this.saida = null;
+    }
+
     this.totalHorasTrabalhadas = ponto.totalHorasTrabalhadas;
   }
 }

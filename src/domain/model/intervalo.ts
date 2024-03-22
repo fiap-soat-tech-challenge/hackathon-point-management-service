@@ -10,7 +10,7 @@ export class Intervalo {
   constructor(...params: any[]) {
     switch (params.length) {
       case 0:
-        this._inicio = new Date();
+        this._inicio = new Date(2024, 2, 21, 12, 0);
         this._tempo = '00:00';
         return;
       default:
@@ -37,7 +37,7 @@ export class Intervalo {
   }
 
   public finalizar(): void {
-    this._fim = new Date();
+    this._fim = new Date(2024, 2, 21, 12, 30);
     this.atualizarTempoIntervalo();
   }
 
@@ -47,8 +47,11 @@ export class Intervalo {
     }
 
     const diff = this._fim.getTime() - this._inicio.getTime();
-    const horas = Math.floor(diff / 1000 / 60 / 60);
-    const minutos = Math.floor((diff / 1000 / 60) % 60);
-    this._tempo = `${horas}:${minutos}`;
+    const totalMinutes = Math.floor(diff / 60000);
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+    this._tempo = `${hours.toString().padStart(2, '0')}:${minutes
+      .toString()
+      .padStart(2, '0')}`;
   }
 }
