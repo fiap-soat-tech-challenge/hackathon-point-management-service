@@ -9,6 +9,8 @@ export class PontoPresenter {
   funcionarioId: string;
   @ApiProperty({ example: '2024-03-21' })
   data: string;
+  @ApiProperty({ example: '08:00' })
+  totalHorasTrabalhadas: string;
   @ApiProperty({ type: [MarcacaoPresenter] })
   marcacoes: Array<MarcacaoPresenter>;
 
@@ -16,6 +18,7 @@ export class PontoPresenter {
     this.id = ponto.id;
     this.funcionarioId = ponto.funcionarioId;
     this.data = ponto.data.toISOString().split('T')[0];
+    this.totalHorasTrabalhadas = ponto.totalHorasTrabalhadas;
     this.marcacoes = ponto.marcacoes.map(
       (marcacao) => new MarcacaoPresenter(marcacao),
     );

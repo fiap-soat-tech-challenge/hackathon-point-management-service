@@ -12,7 +12,7 @@ export class PontoUseCases {
       return await this.updatePonto(ponto, evento);
     }
 
-    ponto = new Ponto(funcionarioId);
+    ponto = new Ponto(funcionarioId, this.getDataComHoraFixa());
     ponto.adicionarMarcacao(new Marcacao(evento));
     return await this.pontoRepository.save(ponto);
   }

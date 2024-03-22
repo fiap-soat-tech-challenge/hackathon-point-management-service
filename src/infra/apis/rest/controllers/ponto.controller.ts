@@ -1,7 +1,8 @@
 import { Body, Controller, Get, Logger, Param, Post } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
-  ApiBearerAuth, ApiCreatedResponse,
+  ApiBearerAuth,
+  ApiCreatedResponse,
   ApiOkResponse,
   ApiOperation,
   ApiResponse,
@@ -11,7 +12,6 @@ import { PontoUseCases } from '../../../../usecases/ponto.use.cases';
 import { Ponto } from '../../../../domain/model/ponto';
 import { PontoPresenter } from '../presenters/ponto.presenter';
 import { PontoDto } from '../dtos/ponto.dto';
-import { Marcacao } from '../../../../domain/model/marcacao';
 
 @ApiTags('Ponto')
 @ApiResponse({ status: '5XX', description: 'Erro interno do sistema' })
@@ -46,7 +46,7 @@ export class PontoController {
       this.FUNCIONARIO_ID,
       pontoDto.evento,
     );
-    this.logger.log(`[Point Registration] Novo ponto salvo`);
+    this.logger.log(`[Novo registro] ${pontoDto.evento} salvo com sucesso`);
     return new PontoPresenter(ponto);
   }
 

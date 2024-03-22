@@ -12,7 +12,8 @@ export class Marcacao {
     switch (params.length) {
       case 1:
         this._evento = params[0];
-        this._dataEHora = new Date();
+        // this._dataEHora = new Date();
+        this._dataEHora = new Date(2024, 3, 21, 14, 0, 0, 0);
         break;
       default:
         this._evento = params[0];

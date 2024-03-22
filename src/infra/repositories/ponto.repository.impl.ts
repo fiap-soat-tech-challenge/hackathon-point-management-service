@@ -13,8 +13,6 @@ export class PontoRepositoryImpl implements PontoRepository {
   ) {}
 
   async getPonto(funcionarioId: string, data: Date): Promise<Ponto | null> {
-    console.log(data);
-
     const pontoEntity = await this.repository.findOne({
       where: { data: data, funcionarioId: new ObjectId(funcionarioId) },
     });

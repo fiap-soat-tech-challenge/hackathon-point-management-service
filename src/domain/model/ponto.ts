@@ -7,23 +7,23 @@ export class Ponto {
   private readonly _funcionarioId: string;
   private readonly _data: Date;
   private readonly _marcacoes: Array<Marcacao>;
-  private _totalHorasTrabalhadas: number = 0;
+  private _totalHorasTrabalhadas: string = '00:00';
 
-  constructor(funcionarioId: string);
+  constructor(funcionarioId: string, data: Date);
 
   constructor(
     id: string,
     funcionarioId: string,
     data: Date,
     marcacoes: Array<Marcacao>,
-    totalHorasTrabalhadas: number,
+    totalHorasTrabalhadas: string,
   );
 
   constructor(...params: any[]) {
     switch (params.length) {
-      case 1:
+      case 2:
         this._funcionarioId = params[0];
-        this._data = this.getDate();
+        this._data = params[1];
         this._marcacoes = [];
         return;
       default:
@@ -33,19 +33,6 @@ export class Ponto {
         this._marcacoes = params[3];
         this._totalHorasTrabalhadas = params[4];
     }
-  }
-
-  private getDate(): Date {
-    const data = new Date();
-    return new Date(
-      data.getFullYear(),
-      data.getMonth(),
-      data.getDate(),
-      0,
-      0,
-      0,
-      0,
-    );
   }
 
   get id(): string | null {
@@ -64,14 +51,14 @@ export class Ponto {
     return this._marcacoes;
   }
 
-  get totalHorasTrabalhadas(): number {
+  get totalHorasTrabalhadas(): string {
     return this._totalHorasTrabalhadas;
   }
 
   public adicionarMarcacao(marcacao: Marcacao): void {
-    // this.validarMarcacao(marcacao);
+    this.validarMarcacao(marcacao);
     this._marcacoes.push(marcacao);
-    // this.atualizarTotalHorasTrabalhadas();
+    this.atualizarTotalHorasTrabalhadas();
   }
 
   private validarMarcacao(marcacao: Marcacao): void {
@@ -82,7 +69,8 @@ export class Ponto {
         break;
       case Evento.INTERVALO_INICIO:
       case Evento.INTERVALO_FIM:
-        this.verificarIntervalo(marcacao);
+        // TODO: Arrumar a validação de intervalo
+        // this.verificarIntervalo(marcacao);
         break;
     }
   }
@@ -90,12 +78,12 @@ export class Ponto {
   private verificarEntradaSaida(marcacao: Marcacao): void {
     if (this._marcacoes.length === 0 && marcacao.evento !== Evento.ENTRADA) {
       throw new MarcacaoInvalidaException(
-        'A primeira marcação deve ser de entrada',
+        'A primeira marcação deve ser de ENTRADA',
       );
     }
     if (this._marcacoes.some((m) => m.evento === marcacao.evento)) {
       throw new MarcacaoInvalidaException(
-        `Marcação ${marcacao.evento} já existe`,
+        `Marcação ${marcacao.evento} já existe na data atual`,
       );
     }
   }
@@ -134,13 +122,21 @@ export class Ponto {
   private atualizarTotalHorasTrabalhadas(): void {
     if (this._marcacoes.length % 2 === 0) {
       let totalHoras = 0;
-      // TODO: Como calcular o total de horas trabalhadas?
-      // for (let i = 0; i < this._marcacoes.length; i += 2) {
-      //   totalHoras +=
-      //     (this._marcacoes[i + 1].getTime() - this._marcacoes[i].getTime()) /
-      //     (1000 * 60 * 60);
-      // }
-      this._totalHorasTrabalhadas = totalHoras;
+      for (let i = 0; i < this._marcacoes.length; i += 2) {
+        totalHoras +=
+          (this._marcacoes[i + 1].dataEHora.getTime() -
+            this._marcacoes[i].dataEHora.getTime()) /
+          (1000 * 60 * 60);
+      }
+      this._totalHorasTrabalhadas = this.formatarTotalHoras(totalHoras);
     }
+  }
+
+  private formatarTotalHoras(totalHoras: number): string {
+    const horas = Math.floor(totalHoras);
+    const minutos = Math.round((totalHoras - horas) * 60);
+    const horasFormatadas = String(horas).padStart(2, '0');
+    const minutosFormatados = String(minutos).padStart(2, '0');
+    return `${horasFormatadas}:${minutosFormatados}`;
   }
 }

@@ -18,13 +18,13 @@ export class PontoEntity {
   marcacoes: Array<any>;
 
   @Column()
-  totalHorasTrabalhadas: number;
+  totalHorasTrabalhadas: string;
 
   constructor(
     funcionarioId: ObjectId,
     data: Date,
     marcacoes: Array<any>,
-    totalHorasTrabalhadas: number,
+    totalHorasTrabalhadas: string,
   ) {
     this.funcionarioId = funcionarioId;
     this.data = data;
