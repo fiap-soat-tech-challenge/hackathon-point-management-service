@@ -1,4 +1,4 @@
-import { Marcacao } from './marcacao';
+import { Intervalo } from './intervalo';
 import { Evento } from './evento';
 import { MarcacaoInvalidaException } from '../exceptions/marcacao-invalida.exception';
 
@@ -6,32 +6,45 @@ export class Ponto {
   private readonly _id: string | null;
   private readonly _funcionarioId: string;
   private readonly _data: Date;
-  private readonly _marcacoes: Array<Marcacao>;
-  private _totalHorasTrabalhadas: string = '00:00';
+  private _entrada: Date;
+  private readonly _intervalos: Array<Intervalo>;
+  private _saida: Date | null;
+  private _totalHorasTrabalhadas: string;
 
-  constructor(funcionarioId: string, data: Date);
+  constructor(funcionarioId: string);
 
   constructor(
     id: string,
     funcionarioId: string,
     data: Date,
-    marcacoes: Array<Marcacao>,
+    entrada: Date,
+    intervalos: Array<Intervalo>,
+    saida: Date,
     totalHorasTrabalhadas: string,
   );
 
   constructor(...params: any[]) {
     switch (params.length) {
-      case 2:
+      case 1:
+        const data = new Date();
         this._funcionarioId = params[0];
-        this._data = params[1];
-        this._marcacoes = [];
+        this._data = new Date(
+          data.getFullYear(),
+          data.getMonth(),
+          data.getDate(),
+        );
+        this.adicionarEntrada(data);
+        this._intervalos = [];
+        this._totalHorasTrabalhadas = '00:00';
         return;
       default:
         this._id = params[0];
         this._funcionarioId = params[1];
         this._data = params[2];
-        this._marcacoes = params[3];
-        this._totalHorasTrabalhadas = params[4];
+        this._entrada = params[3];
+        this._intervalos = params[4];
+        this._saida = params[5];
+        this._totalHorasTrabalhadas = params[6];
     }
   }
 
@@ -47,96 +60,84 @@ export class Ponto {
     return this._data;
   }
 
-  get marcacoes(): Array<Marcacao> {
-    return this._marcacoes;
+  get entrada(): Date {
+    return this._entrada;
+  }
+
+  get intervalos(): Array<Intervalo> {
+    return this._intervalos;
+  }
+
+  get saida(): Date {
+    return this._saida;
   }
 
   get totalHorasTrabalhadas(): string {
     return this._totalHorasTrabalhadas;
   }
 
-  public adicionarMarcacao(marcacao: Marcacao): void {
-    this.validarMarcacao(marcacao);
-    this._marcacoes.push(marcacao);
-    this.atualizarTotalHorasTrabalhadas();
+  private adicionarEntrada(data: Date): void {
+    this._entrada = data;
   }
 
-  private validarMarcacao(marcacao: Marcacao): void {
-    switch (marcacao.evento) {
+  public adicionarEvento(evento: Evento): void {
+    if (this._saida) {
+      throw new MarcacaoInvalidaException(
+        'A Saída já foi registrada, não pode adicionar mais eventos',
+      );
+    }
+
+    switch (evento) {
       case Evento.ENTRADA:
+        throw new MarcacaoInvalidaException('Entrada já registrada');
+      case Evento.INTERVALO:
+        this.adicionarIntervalo();
+        break;
       case Evento.SAIDA:
-        this.verificarEntradaSaida(marcacao);
-        break;
-      case Evento.INTERVALO_INICIO:
-      case Evento.INTERVALO_FIM:
-        // TODO: Arrumar a validação de intervalo
-        // this.verificarIntervalo(marcacao);
+        this.adicionarSaida();
         break;
     }
+    // this.atualizarTotalHorasTrabalhadas();
   }
 
-  private verificarEntradaSaida(marcacao: Marcacao): void {
-    if (this._marcacoes.length === 0 && marcacao.evento !== Evento.ENTRADA) {
-      throw new MarcacaoInvalidaException(
-        'A primeira marcação deve ser de ENTRADA',
-      );
+  private adicionarIntervalo(): void {
+    if (this.intervalos.length === 0) {
+      this._intervalos.push(new Intervalo());
+      return;
     }
-    if (this._marcacoes.some((m) => m.evento === marcacao.evento)) {
-      throw new MarcacaoInvalidaException(
-        `Marcação ${marcacao.evento} já existe na data atual`,
-      );
+
+    const ultimoIntervalo = this._intervalos[this._intervalos.length - 1];
+    if (!ultimoIntervalo.foiFinalizado()) {
+      ultimoIntervalo.finalizar();
+      return;
     }
+
+    this._intervalos.push(new Intervalo());
   }
 
-  private verificarIntervalo(marcacao: Marcacao): void {
-    const intervalos = this._marcacoes
-      .filter(
-        (m) =>
-          m.evento === Evento.INTERVALO_INICIO ||
-          m.evento === Evento.INTERVALO_FIM,
-      )
-      .sort((a, b) => a.dataEHora.getTime() - b.dataEHora.getTime());
-
-    // TODO: Como verificar se a marcação de intervalo é válida?
-    if (intervalos.length % 2 === 0) {
-      throw new MarcacaoInvalidaException(
-        'Marcação de intervalo sem marcação de entrada',
-      );
+  private adicionarSaida(): void {
+    if (
+      this.intervalos.length !== 0 &&
+      this.intervalos.filter((intervalo) => !intervalo.foiFinalizado()).length >
+        0
+    ) {
+      throw new MarcacaoInvalidaException('Intervalo não finalizado');
     }
 
-    if (marcacao.evento === Evento.INTERVALO_INICIO) {
-      if (intervalos.length > 0) {
-        throw new MarcacaoInvalidaException(
-          'Marcação de início do intervalo antes do fim do intervalo anterior',
-        );
-      }
-    } else {
-      if (intervalos.length === 0) {
-        throw new MarcacaoInvalidaException(
-          'Marcação de intervalo sem marcação de início',
-        );
-      }
+    if (this._saida) {
+      throw new MarcacaoInvalidaException('Saída já registrada');
     }
+
+    this._saida = new Date();
   }
 
   private atualizarTotalHorasTrabalhadas(): void {
-    if (this._marcacoes.length % 2 === 0) {
-      let totalHoras = 0;
-      for (let i = 0; i < this._marcacoes.length; i += 2) {
-        totalHoras +=
-          (this._marcacoes[i + 1].dataEHora.getTime() -
-            this._marcacoes[i].dataEHora.getTime()) /
-          (1000 * 60 * 60);
-      }
-      this._totalHorasTrabalhadas = this.formatarTotalHoras(totalHoras);
-    }
-  }
-
-  private formatarTotalHoras(totalHoras: number): string {
-    const horas = Math.floor(totalHoras);
-    const minutos = Math.round((totalHoras - horas) * 60);
-    const horasFormatadas = String(horas).padStart(2, '0');
-    const minutosFormatados = String(minutos).padStart(2, '0');
-    return `${horasFormatadas}:${minutosFormatados}`;
+    // const totalHoras = this._turnos.reduce(
+    //   (acc, turno) => acc + turno.totalHorasTrabalhadas,
+    //   0,
+    // );
+    // const horas = Math.floor(totalHoras / 60);
+    // const minutos = totalHoras % 60;
+    // this._totalHorasTrabalhadas = `${horas}:${minutos}`;
   }
 }

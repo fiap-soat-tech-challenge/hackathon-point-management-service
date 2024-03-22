@@ -1,7 +1,7 @@
 import { Ponto } from '../domain/model/ponto';
-import { Marcacao } from '../domain/model/marcacao';
 import { PontoRepository } from '../domain/repositories/ponto.repository';
 import { Evento } from '../domain/model/evento';
+import { PontoInvalidoException } from '../domain/exceptions/ponto.invalido.exception';
 
 export class PontoUseCases {
   constructor(private readonly pontoRepository: PontoRepository) {}
@@ -12,13 +12,17 @@ export class PontoUseCases {
       return await this.updatePonto(ponto, evento);
     }
 
-    ponto = new Ponto(funcionarioId, this.getDataComHoraFixa());
-    ponto.adicionarMarcacao(new Marcacao(evento));
+    if (evento !== Evento.ENTRADA) {
+      throw new PontoInvalidoException(
+        'A primeira marcação do dia deve ser ENTRADA',
+      );
+    }
+    ponto = new Ponto(funcionarioId);
     return await this.pontoRepository.save(ponto);
   }
 
   async updatePonto(ponto: Ponto, evento: Evento): Promise<Ponto> {
-    ponto.adicionarMarcacao(new Marcacao(evento));
+    ponto.adicionarEvento(evento);
     await this.pontoRepository.update(ponto);
     return ponto;
   }

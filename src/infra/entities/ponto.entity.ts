@@ -12,10 +12,16 @@ export class PontoEntity {
   @Column()
   data: Date;
 
+  @Column()
+  entrada: Date;
+
   @Column({
     array: true,
   })
-  marcacoes: Array<any>;
+  intervalos: Array<any>;
+
+  @Column()
+  saida: Date;
 
   @Column()
   totalHorasTrabalhadas: string;
@@ -23,12 +29,16 @@ export class PontoEntity {
   constructor(
     funcionarioId: ObjectId,
     data: Date,
-    marcacoes: Array<any>,
+    entrada: Date,
+    intervalos: Array<any>,
+    saida: Date,
     totalHorasTrabalhadas: string,
   ) {
     this.funcionarioId = funcionarioId;
     this.data = data;
-    this.marcacoes = marcacoes;
+    this.entrada = entrada;
+    this.intervalos = intervalos;
+    this.saida = saida;
     this.totalHorasTrabalhadas = totalHorasTrabalhadas;
   }
 

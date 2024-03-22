@@ -1,7 +1,7 @@
 import { PontoEntity } from '../entities/ponto.entity';
 import { Ponto } from '../../domain/model/ponto';
 import { ObjectId } from 'mongodb';
-import { MarcacaoConverter } from './marcacao.converter';
+import { IntervaloConverter } from './intervalo.converter';
 
 export class PontoConverter {
   public static toPonto(entity: PontoEntity): Ponto {
@@ -9,7 +9,9 @@ export class PontoConverter {
       entity.id.toString(),
       entity.funcionarioId.toString(),
       entity.data,
-      entity.marcacoes.map((m) => MarcacaoConverter.toMarcacao(m)),
+      entity.entrada,
+      entity.intervalos.map((i) => IntervaloConverter.toIntervalo(i)),
+      entity.saida,
       entity.totalHorasTrabalhadas,
     );
   }
@@ -18,7 +20,9 @@ export class PontoConverter {
     return new PontoEntity(
       new ObjectId(ponto.funcionarioId),
       ponto.data,
-      ponto.marcacoes.map((m) => MarcacaoConverter.toEntity(m)),
+      ponto.entrada,
+      ponto.intervalos.map((i) => IntervaloConverter.toEntity(i)),
+      ponto.saida,
       ponto.totalHorasTrabalhadas,
     );
   }

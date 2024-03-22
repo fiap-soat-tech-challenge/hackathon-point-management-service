@@ -68,7 +68,10 @@ export class PontoController {
   })
   @Get(':data')
   async visualiza(@Param('data') data: string): Promise<Array<PontoPresenter>> {
-    const pontos: Array<Ponto> = await this.pontoUseCases.getAllPontosByData(data, this.FUNCIONARIO_ID);
+    const pontos: Array<Ponto> = await this.pontoUseCases.getAllPontosByData(
+      data,
+      this.FUNCIONARIO_ID,
+    );
     return pontos.map((ponto) => new PontoPresenter(ponto));
   }
 

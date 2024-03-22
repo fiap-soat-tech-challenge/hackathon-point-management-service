@@ -8,6 +8,8 @@ import { RestExceptionFilter } from './infra/apis/rest/exceptions/rest-exception
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  process.env.TZ = 'America/Sao_Paulo';
+
   useContainer(app.select(AppModule), { fallbackOnErrors: true });
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
   app.useGlobalFilters(new RestExceptionFilter());
