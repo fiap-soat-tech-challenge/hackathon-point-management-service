@@ -1,5 +1,5 @@
 import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiExcludeEndpoint, ApiTags } from '@nestjs/swagger';
 import { LoginDto } from '../dtos/login.dto';
 import { AuthService } from '../../../auth/auth.service';
 import { RegisterDto } from '../dtos/register.dto';
@@ -20,6 +20,7 @@ export class AuthController {
   }
 
   @Post('register')
+  @ApiExcludeEndpoint()
   async register(@Body() registerDto: RegisterDto): Promise<RegisterPresenter> {
     const user = await this.authService.register(registerDto);
     return new RegisterPresenter(user);

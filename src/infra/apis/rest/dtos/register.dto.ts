@@ -16,6 +16,5 @@ export class RegisterDto {
   email: string;
   @ApiProperty()
   @IsNotEmpty()
-  @Min(8, { message: 'A senha deve ter no mínimo 8 caracteres' })
   password: string;
 }
