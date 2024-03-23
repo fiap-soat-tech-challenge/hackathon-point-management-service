@@ -2,10 +2,13 @@ import {
   Body,
   Controller,
   Get,
-  HttpCode, HttpStatus,
+  HttpCode,
+  HttpStatus,
   Logger,
   Param,
-  Post, UseGuards
+  Post,
+  Req,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
@@ -14,7 +17,7 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiResponse,
-  ApiTags,
+  ApiTags
 } from '@nestjs/swagger';
 import { PontoUseCases } from '../../../../usecases/ponto.use.cases';
 import { Ponto } from '../../../../domain/model/ponto';
@@ -45,9 +48,12 @@ export class PontoController {
   })
   @UseGuards(JwtAuthGuard)
   @Post()
-  async registro(@Body() pontoDto: PontoDto): Promise<PontoPresenter> {
+  async registro(
+    @Req() req: any,
+    @Body() pontoDto: PontoDto,
+  ): Promise<PontoPresenter> {
     const ponto = await this.pontoUseCases.addPonto(
-      this.FUNCIONARIO_ID,
+      req.user.id,
       pontoDto.evento,
     );
     this.logger.log(`[Novo registro] ${pontoDto.evento} salvo com sucesso`);
@@ -67,10 +73,13 @@ export class PontoController {
   })
   @UseGuards(JwtAuthGuard)
   @Get(':data')
-  async visualiza(@Param('data') data: string): Promise<Array<PontoPresenter>> {
+  async visualiza(
+    @Req() req: any,
+    @Param('data') data: string,
+  ): Promise<Array<PontoPresenter>> {
     const pontos: Array<Ponto> = await this.pontoUseCases.getAllPontosByData(
       data,
-      this.FUNCIONARIO_ID,
+      req.user.id,
     );
     return pontos.map((ponto) => new PontoPresenter(ponto, true));
   }
@@ -89,9 +98,12 @@ export class PontoController {
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
   @Post('relatorio')
-  async relatorio(@Body() relatorioDto: RelatorioDto): Promise<void> {
+  async relatorio(
+    @Req() req: any,
+    @Body() relatorioDto: RelatorioDto,
+  ): Promise<void> {
     await this.pontoUseCases.relatorioMensal(
-      this.FUNCIONARIO_ID,
+      req.user.id,
       relatorioDto.mes,
       relatorioDto.ano,
     );
