@@ -5,6 +5,9 @@ import { HealthModule } from './infra/health/health.module';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DatabaseConfig } from './infra/database/database.config';
+import { RepositoriesModule } from './infra/repositories/repositories.module';
+import { PassportModule } from '@nestjs/passport';
+import { AuthModule } from './infra/auth/auth.module';
 
 @Module({
   imports: [
@@ -14,7 +17,9 @@ import { DatabaseConfig } from './infra/database/database.config';
     TypeOrmModule.forRootAsync({
       useClass: DatabaseConfig,
     }),
+    AuthModule,
     RestModule,
+    RepositoriesModule,
     UseCasesProxyModule,
     HealthModule,
   ],
