@@ -3,8 +3,8 @@ import * as nodemailer from 'nodemailer';
 import { ConfigService } from '@nestjs/config';
 import { RelatorioSenderService } from '../../domain/services/relatorio-sender.service';
 import { Ponto } from '../../domain/model/ponto';
-import { Funcionario } from '../../domain/model/funcionario';
 import { EmailHelper } from '../shared/email.helper';
+import { User } from '../../domain/model/user';
 
 @Injectable()
 export class RelatorioSenderServiceImpl implements RelatorioSenderService {
@@ -23,10 +23,10 @@ export class RelatorioSenderServiceImpl implements RelatorioSenderService {
     });
   }
 
-  async send(funcionario: Funcionario, relatorio: Array<Ponto>): Promise<void> {
-    const html = EmailHelper.bodyEmail(funcionario, relatorio);
+  async send(user: User, relatorio: Array<Ponto>): Promise<void> {
+    const html = EmailHelper.bodyEmail(user, relatorio);
     await this._sendMail(
-      funcionario.email,
+      user.email,
       'Relatório Mensal de Ponto',
       'teste0bklaakakaka',
       html,

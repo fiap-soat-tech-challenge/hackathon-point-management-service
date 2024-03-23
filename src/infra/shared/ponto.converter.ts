@@ -7,7 +7,7 @@ export class PontoConverter {
   public static toPonto(entity: PontoEntity): Ponto {
     return new Ponto(
       entity.id.toString(),
-      entity.funcionarioId.toString(),
+      entity.userId.toString(),
       entity.data,
       entity.entrada,
       entity.intervalos.map((i) => IntervaloConverter.toIntervalo(i)),
@@ -18,7 +18,7 @@ export class PontoConverter {
 
   public static toEntity(ponto: Ponto): PontoEntity {
     return new PontoEntity(
-      new ObjectId(ponto.funcionarioId),
+      new ObjectId(ponto.userId),
       ponto.data,
       ponto.entrada,
       ponto.intervalos.map((i) => IntervaloConverter.toEntity(i)),

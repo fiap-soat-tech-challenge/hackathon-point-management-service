@@ -25,6 +25,7 @@ import { PontoPresenter } from '../presenters/ponto.presenter';
 import { PontoDto } from '../dtos/ponto.dto';
 import { RelatorioDto } from '../dtos/relatorio.dto';
 import { JwtAuthGuard } from '../../../auth/jwt-auth.guard';
+import { UserUseCases } from '../../../../usecases/user.use.cases';
 
 @ApiTags('Ponto')
 @ApiResponse({ status: '5XX', description: 'Erro interno do sistema' })
@@ -32,8 +33,11 @@ import { JwtAuthGuard } from '../../../auth/jwt-auth.guard';
 @Controller('/api/ponto')
 export class PontoController {
   private readonly logger = new Logger(PontoController.name);
-  private FUNCIONARIO_ID = '65fcb34a3746a1a6bbe927ea';
-  constructor(private pontoUseCases: PontoUseCases) {}
+
+  constructor(
+    private pontoUseCases: PontoUseCases,
+    private userUseCases: UserUseCases,
+  ) {}
 
   @ApiOperation({
     summary: 'Registra um novo ponto',

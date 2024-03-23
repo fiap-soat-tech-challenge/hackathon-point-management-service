@@ -16,9 +16,14 @@ const createUserUseCases = (userRepository: UserRepository) => {
 
 const createPontoUseCases = (
   pontoRepository: PontoRepository,
+  userRepository: UserRepository,
   relatorioSenderService: RelatorioSenderService,
 ) => {
-  return new PontoUseCases(pontoRepository, relatorioSenderService);
+  return new PontoUseCases(
+    pontoRepository,
+    userRepository,
+    relatorioSenderService,
+  );
 };
 
 @Module({
@@ -32,7 +37,11 @@ const createPontoUseCases = (
     {
       provide: PontoUseCases,
       useFactory: createPontoUseCases,
-      inject: [PontoRepositoryImpl, RelatorioSenderServiceImpl],
+      inject: [
+        PontoRepositoryImpl,
+        UserRepositoryImpl,
+        RelatorioSenderServiceImpl,
+      ],
     },
   ],
   exports: [UserUseCases, PontoUseCases],

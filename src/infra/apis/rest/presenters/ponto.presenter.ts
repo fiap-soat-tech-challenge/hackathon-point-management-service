@@ -6,7 +6,7 @@ export class PontoPresenter {
   @ApiProperty({ example: '123' })
   id: string;
   @ApiProperty({ example: '45565' })
-  funcionarioId: string;
+  userId: string;
   @ApiProperty({ example: '2024-03-21' })
   data: string;
   @ApiProperty({
@@ -30,7 +30,7 @@ export class PontoPresenter {
 
   constructor(ponto: Ponto, mostrarHorasTrabalhadas: boolean = false) {
     this.id = ponto.id;
-    this.funcionarioId = ponto.funcionarioId;
+    this.userId = ponto.userId;
     this.data = ponto.data.toISOString().split('T')[0];
     this.entrada = {
       data: ponto.entrada.toISOString().split('T')[0],

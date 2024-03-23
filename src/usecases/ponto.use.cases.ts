@@ -3,16 +3,18 @@ import { PontoRepository } from '../domain/repositories/ponto.repository';
 import { Evento } from '../domain/model/evento';
 import { PontoInvalidoException } from '../domain/exceptions/ponto.invalido.exception';
 import { RelatorioSenderService } from '../domain/services/relatorio-sender.service';
-import { Funcionario } from '../domain/model/funcionario';
+import { UserRepository } from '../domain/repositories/user.repository';
+import { User } from '../domain/model/user';
 
 export class PontoUseCases {
   constructor(
     private readonly pontoRepository: PontoRepository,
+    private readonly userRepository: UserRepository,
     private readonly relatorioSenderService: RelatorioSenderService,
   ) {}
 
-  async addPonto(funcionarioId: string, evento: Evento): Promise<Ponto> {
-    let ponto = await this.getPonto(funcionarioId);
+  async addPonto(userId: string, evento: Evento): Promise<Ponto> {
+    let ponto = await this.getPonto(userId);
     if (ponto) {
       return await this.updatePonto(ponto, evento);
     }
@@ -22,7 +24,7 @@ export class PontoUseCases {
         'A primeira marcação do dia deve ser ENTRADA',
       );
     }
-    ponto = new Ponto(funcionarioId);
+    ponto = new Ponto(userId);
     return await this.pontoRepository.save(ponto);
   }
 
@@ -32,42 +34,35 @@ export class PontoUseCases {
     return ponto;
   }
 
-  async getPonto(funcionarioId: string): Promise<Ponto | null> {
+  async getPonto(userId: string): Promise<Ponto | null> {
     return await this.pontoRepository.getPonto(
-      funcionarioId,
+      userId,
       this.getDataComHoraFixa(),
     );
   }
 
   async getAllPontosByData(
     data: string,
-    funcionarioId: string,
+    userId: string,
   ): Promise<Array<Ponto>> {
     return await this.pontoRepository.getAllPontosData(
       this.getDataOfString(data),
-      funcionarioId,
+      userId,
     );
   }
 
   async relatorioMensal(
-    funcionarioId: string,
+    userId: string,
     mes: number,
     ano: number,
   ): Promise<void> {
+    const user: User = await this.userRepository.findById(userId);
     const relatorio = await this.pontoRepository.getAllPontosByMesAno(
-      funcionarioId,
+      user.id,
       mes - 1,
       ano,
     );
-
-    // TODO: Arrumar funcionario
-    const funcionario = new Funcionario(
-      'Ana da Silva',
-      'ana.silva',
-      '123',
-      'ana.silva@email.com',
-    );
-    await this.relatorioSenderService.send(funcionario, relatorio);
+    await this.relatorioSenderService.send(user, relatorio);
   }
 
   private getDataComHoraFixa(): Date {

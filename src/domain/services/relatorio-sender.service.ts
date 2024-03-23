@@ -1,6 +1,6 @@
 import { Ponto } from '../model/ponto';
-import { Funcionario } from '../model/funcionario';
+import { User } from '../model/user';
 
 export interface RelatorioSenderService {
-  send(funcionario: Funcionario, relatorio: Array<Ponto>): Promise<void>;
+  send(user: User, relatorio: Array<Ponto>): Promise<void>;
 }

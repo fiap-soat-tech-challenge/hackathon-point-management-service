@@ -6,7 +6,7 @@ describe('Ponto', () => {
       const registro = new Date();
       const ponto = new Ponto('1', registro);
       expect(ponto).toBeInstanceOf(Ponto);
-      expect(ponto.funcionarioId).toBe('1');
+      expect(ponto.userId).toBe('1');
       expect(ponto.registro).toBe(registro);
       expect(ponto.id).toBe(null);
     });

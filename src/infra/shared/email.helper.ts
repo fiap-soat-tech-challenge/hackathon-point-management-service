@@ -1,12 +1,9 @@
-import { Funcionario } from '../../domain/model/funcionario';
+import { User } from '../../domain/model/user';
 import { Ponto } from '../../domain/model/ponto';
 import { PontoPresenter } from '../apis/rest/presenters/ponto.presenter';
 
 export class EmailHelper {
-  public static bodyEmail(
-    funcionario: Funcionario,
-    relatorio: Array<Ponto>,
-  ): string {
+  public static bodyEmail(user: User, relatorio: Array<Ponto>): string {
     const relatorioPresenter = relatorio.map(
       (ponto) => new PontoPresenter(ponto, true),
     );
@@ -53,7 +50,7 @@ export class EmailHelper {
 </head>
 <body>
     <div class="container">
-        <h1>Relatório Mensal de Pontos do colaborador(a) ${funcionario.nome}</h1>
+        <h1>Relatório Mensal de Pontos do colaborador(a) ${user.nome}</h1>
         <p>Segue abaixo o relatório de ponto:</p>
         <table>
             <thead>

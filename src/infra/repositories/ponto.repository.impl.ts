@@ -14,9 +14,9 @@ export class PontoRepositoryImpl implements PontoRepository {
     private readonly dataSource: DataSource,
   ) {}
 
-  async getPonto(funcionarioId: string, data: Date): Promise<Ponto | null> {
+  async getPonto(userId: string, data: Date): Promise<Ponto | null> {
     const pontoEntity = await this.repository.findOne({
-      where: { data: data, funcionarioId: new ObjectId(funcionarioId) },
+      where: { data: data, userId: new ObjectId(userId) },
     });
 
     if (pontoEntity === null) return null;
@@ -25,16 +25,16 @@ export class PontoRepositoryImpl implements PontoRepository {
 
   async getAllPontosData(
     data: Date,
-    funcionarioId: string,
+    userId: string,
   ): Promise<Array<Ponto>> {
     const entities = await this.repository.find({
-      where: { data: data, funcionarioId: new ObjectId(funcionarioId) },
+      where: { data: data, userId: new ObjectId(userId) },
     });
     return entities.map((entity) => PontoConverter.toPonto(entity));
   }
 
   async getAllPontosByMesAno(
-    funcionarioId: string,
+    userId: string,
     mes: number,
     ano: number,
   ): Promise<Array<Ponto>> {
@@ -42,7 +42,7 @@ export class PontoRepositoryImpl implements PontoRepository {
       .getMongoRepository(PontoEntity)
       .find({
         where: {
-          funcionarioId: new ObjectId(funcionarioId),
+          userId: new ObjectId(userId),
           data: {
             $gte: new Date(ano, mes, 1),
             $lt: new Date(ano, mes + 1, 1),

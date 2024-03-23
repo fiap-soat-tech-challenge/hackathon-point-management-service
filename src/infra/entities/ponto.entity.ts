@@ -7,7 +7,7 @@ export class PontoEntity {
   _id: ObjectId;
 
   @Column()
-  funcionarioId: ObjectId;
+  userId: ObjectId;
 
   @Column()
   data: Date;
@@ -27,14 +27,14 @@ export class PontoEntity {
   totalHorasTrabalhadas: string;
 
   constructor(
-    funcionarioId: ObjectId,
+    userId: ObjectId,
     data: Date,
     entrada: Date,
     intervalos: Array<any>,
     saida: Date,
     totalHorasTrabalhadas: string,
   ) {
-    this.funcionarioId = funcionarioId;
+    this.userId = userId;
     this.data = data;
     this.entrada = entrada;
     this.intervalos = intervalos;

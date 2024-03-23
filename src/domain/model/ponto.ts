@@ -4,18 +4,18 @@ import { MarcacaoInvalidaException } from '../exceptions/marcacao-invalida.excep
 
 export class Ponto {
   private readonly _id: string | null;
-  private readonly _funcionarioId: string;
+  private readonly _userId: string;
   private readonly _data: Date;
   private _entrada: Date;
   private readonly _intervalos: Array<Intervalo>;
   private _saida: Date | null;
   private _totalHorasTrabalhadas: string;
 
-  constructor(funcionarioId: string);
+  constructor(userId: string);
 
   constructor(
     id: string,
-    funcionarioId: string,
+    userId: string,
     data: Date,
     entrada: Date,
     intervalos: Array<Intervalo>,
@@ -27,7 +27,7 @@ export class Ponto {
     switch (params.length) {
       case 1:
         const data = new Date();
-        this._funcionarioId = params[0];
+        this._userId = params[0];
         this._data = new Date(
           data.getFullYear(),
           data.getMonth(),
@@ -39,7 +39,7 @@ export class Ponto {
         return;
       default:
         this._id = params[0];
-        this._funcionarioId = params[1];
+        this._userId = params[1];
         this._data = params[2];
         this._entrada = params[3];
         this._intervalos = params[4];
@@ -52,8 +52,8 @@ export class Ponto {
     return this._id;
   }
 
-  get funcionarioId(): string {
-    return this._funcionarioId;
+  get userId(): string {
+    return this._userId;
   }
 
   get data(): Date {
