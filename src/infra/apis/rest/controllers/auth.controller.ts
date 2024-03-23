@@ -1,16 +1,26 @@
-import { Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { LoginDto } from '../dtos/login.dto';
+import { AuthService } from '../../../auth/auth.service';
+import { RegisterDto } from '../dtos/register.dto';
+import { RegisterPresenter } from '../presenters/register.presenter';
 
 @ApiTags('Login')
 @Controller('/api/auth')
 export class AuthController {
-  /*
-  Autenticação de Usuário: O sistema deve permitir que os usuários se
-  autentiquem usando um nome de usuário ou matrícula e senha.
-  */
-  @Post('/login')
-  async login(req: any, res: any) {
-    console.log(req.body);
-    return res.status(200).send('ok');
+  constructor(private readonly authService: AuthService) {}
+
+  @Post('login')
+  async login(@Body() loginDto: LoginDto): Promise<{ accessToken: string }> {
+    return await this.authService.login(
+      loginDto.username_ou_matricula,
+      loginDto.password,
+    );
+  }
+
+  @Post('register')
+  async register(@Body() registerDto: RegisterDto): Promise<RegisterPresenter> {
+    const user = await this.authService.register(registerDto);
+    return new RegisterPresenter(user);
   }
 }

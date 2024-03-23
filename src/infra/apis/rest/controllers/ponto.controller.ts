@@ -2,10 +2,10 @@ import {
   Body,
   Controller,
   Get,
-  HttpCode,
+  HttpCode, HttpStatus,
   Logger,
   Param,
-  Post,
+  Post, UseGuards
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
@@ -21,6 +21,7 @@ import { Ponto } from '../../../../domain/model/ponto';
 import { PontoPresenter } from '../presenters/ponto.presenter';
 import { PontoDto } from '../dtos/ponto.dto';
 import { RelatorioDto } from '../dtos/relatorio.dto';
+import { JwtAuthGuard } from '../../../auth/jwt-auth.guard';
 
 @ApiTags('Ponto')
 @ApiResponse({ status: '5XX', description: 'Erro interno do sistema' })
@@ -42,6 +43,7 @@ export class PontoController {
   @ApiBadRequestResponse({
     description: 'Dados inválidos ou incorretos',
   })
+  @UseGuards(JwtAuthGuard)
   @Post()
   async registro(@Body() pontoDto: PontoDto): Promise<PontoPresenter> {
     const ponto = await this.pontoUseCases.addPonto(
@@ -63,6 +65,7 @@ export class PontoController {
   @ApiBadRequestResponse({
     description: 'Dados inválidos ou incorretos',
   })
+  @UseGuards(JwtAuthGuard)
   @Get(':data')
   async visualiza(@Param('data') data: string): Promise<Array<PontoPresenter>> {
     const pontos: Array<Ponto> = await this.pontoUseCases.getAllPontosByData(
@@ -72,12 +75,6 @@ export class PontoController {
     return pontos.map((ponto) => new PontoPresenter(ponto, true));
   }
 
-  /*
-  Relatórios: O sistema deve ser capaz de gerar o espelho de ponto mensal com
-  base nos registros de ponto do mês fechado (anterior) e
-  enviar esse relatório por e-mail ao solicitante.
-  (Listagem das datas, batimentos de ponto e total de horas trabalhadas)
-   */
   @ApiOperation({
     summary: 'Gera e envia o relatório de registro de ponto mensal',
     description:
@@ -89,7 +86,8 @@ export class PontoController {
   @ApiBadRequestResponse({
     description: 'Dados inválidos ou incorretos',
   })
-  @HttpCode(200)
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
   @Post('relatorio')
   async relatorio(@Body() relatorioDto: RelatorioDto): Promise<void> {
     await this.pontoUseCases.relatorioMensal(
