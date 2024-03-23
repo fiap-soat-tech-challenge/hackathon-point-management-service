@@ -61,7 +61,7 @@ export class PontoController {
       pontoDto.evento,
     );
     this.logger.log(`[Novo registro] ${pontoDto.evento} salvo com sucesso`);
-    return new PontoPresenter(ponto, true);
+    return new PontoPresenter(ponto);
   }
 
   @ApiOperation({

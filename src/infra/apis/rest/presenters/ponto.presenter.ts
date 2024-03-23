@@ -1,6 +1,9 @@
 import { Ponto } from '../../../../domain/model/ponto';
 import { ApiProperty } from '@nestjs/swagger';
 import { IntervaloPresenter } from './intervalo.presenter';
+import { DateTime } from 'luxon';
+import { Data } from '../../../../domain/helpers/data';
+import { DataConverter } from '../../../shared/data.converter';
 
 export class PontoPresenter {
   @ApiProperty({ example: '123' })
@@ -29,21 +32,25 @@ export class PontoPresenter {
   totalHorasTrabalhadas: string;
 
   constructor(ponto: Ponto, mostrarHorasTrabalhadas: boolean = false) {
+    const data: DateTime = DataConverter.dateToISOString(ponto.data);
+    const entrada: DateTime = DataConverter.dateToISOString(ponto.entrada);
+
     this.id = ponto.id;
     this.userId = ponto.userId;
-    this.data = ponto.data.toISOString().split('T')[0];
+    this.data = data.toISODate();
     this.entrada = {
-      data: ponto.entrada.toISOString().split('T')[0],
-      hora: ponto.entrada.toISOString().split('T')[1].slice(0, -8),
+      data: entrada.toISODate(),
+      hora: entrada.toLocaleString(DateTime.TIME_24_SIMPLE),
     };
     this.intervalos = ponto.intervalos.map(
       (intervalo) => new IntervaloPresenter(intervalo),
     );
 
     if (ponto.saida) {
+      const saida: DateTime = DataConverter.dateToISOString(ponto.saida);
       this.saida = {
-        data: ponto.saida.toISOString().split('T')[0],
-        hora: ponto.saida.toISOString().split('T')[1].slice(0, -8),
+        data: saida.toISODate(),
+        hora: saida.toLocaleString(DateTime.TIME_24_SIMPLE),
       };
     } else {
       this.saida = null;

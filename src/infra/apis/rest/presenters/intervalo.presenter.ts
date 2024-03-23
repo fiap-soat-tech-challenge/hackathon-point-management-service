@@ -1,5 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Intervalo } from '../../../../domain/model/intervalo';
+import { DateTime } from 'luxon';
+import { DataConverter } from '../../../shared/data.converter';
 
 export class IntervaloPresenter {
   @ApiProperty({
@@ -26,15 +28,18 @@ export class IntervaloPresenter {
   readonly tempoDoIntervalo: string;
 
   constructor(intervalo: Intervalo) {
+    const inicio: DateTime = DataConverter.dateToISOString(intervalo.inicio);
+
     this.dataHoraInicio = {
-      data: intervalo.inicio.toISOString().split('T')[0],
-      hora: intervalo.inicio.toISOString().split('T')[1].slice(0, -8),
+      data: inicio.toISODate(),
+      hora: inicio.toLocaleString(DateTime.TIME_24_SIMPLE),
     };
 
     if (intervalo.fim) {
+      const fim: DateTime = DataConverter.dateToISOString(intervalo.fim);
       this.dataHoraFim = {
-        data: intervalo.fim.toISOString().split('T')[0],
-        hora: intervalo.fim.toISOString().split('T')[1].slice(0, -8),
+        data: fim.toISODate(),
+        hora: fim.toLocaleString(DateTime.TIME_24_SIMPLE),
       };
     } else {
       this.dataHoraFim = null;

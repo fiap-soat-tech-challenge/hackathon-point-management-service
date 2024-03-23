@@ -1,3 +1,5 @@
+import { Data } from '../helpers/data';
+
 export class Intervalo {
   private readonly _inicio: Date;
   private _fim: Date | null;
@@ -37,7 +39,7 @@ export class Intervalo {
   }
 
   public finalizar(): void {
-    this._fim = new Date();
+    this._fim = Data.newDateTime();
     this.atualizarTempoIntervalo();
   }
 

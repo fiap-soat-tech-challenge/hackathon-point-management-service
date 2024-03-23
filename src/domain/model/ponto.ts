@@ -1,14 +1,15 @@
 import { Intervalo } from './intervalo';
 import { Evento } from './evento';
 import { MarcacaoInvalidaException } from '../exceptions/marcacao-invalida.exception';
+import { Data } from '../helpers/data';
 
 export class Ponto {
   private readonly _id: string | null;
   private readonly _userId: string;
-  private readonly _data: Date;
-  private _entrada: Date;
+  private readonly _data: any;
+  private _entrada: any;
   private readonly _intervalos: Array<Intervalo>;
-  private _saida: Date | null;
+  private _saida: any | null;
   private _totalHorasTrabalhadas: string;
 
   constructor(userId: string);
@@ -16,24 +17,19 @@ export class Ponto {
   constructor(
     id: string,
     userId: string,
-    data: Date,
-    entrada: Date,
+    data: any,
+    entrada: any,
     intervalos: Array<Intervalo>,
-    saida: Date,
+    saida: any,
     totalHorasTrabalhadas: string,
   );
 
   constructor(...params: any[]) {
     switch (params.length) {
       case 1:
-        const data = new Date();
         this._userId = params[0];
-        this._data = new Date(
-          data.getFullYear(),
-          data.getMonth(),
-          data.getDate(),
-        );
-        this.adicionarEntrada(data);
+        this._data = Data.newDate();
+        this._entrada = Data.newDateTime();
         this._intervalos = [];
         this._totalHorasTrabalhadas = '00:00';
         return;
@@ -56,11 +52,11 @@ export class Ponto {
     return this._userId;
   }
 
-  get data(): Date {
+  get data(): any {
     return this._data;
   }
 
-  get entrada(): Date {
+  get entrada(): any {
     return this._entrada;
   }
 
@@ -68,16 +64,12 @@ export class Ponto {
     return this._intervalos;
   }
 
-  get saida(): Date {
+  get saida(): any {
     return this._saida;
   }
 
   get totalHorasTrabalhadas(): string {
     return this._totalHorasTrabalhadas;
-  }
-
-  private adicionarEntrada(data: Date): void {
-    this._entrada = data;
   }
 
   public adicionarEvento(evento: Evento): void {
@@ -128,7 +120,7 @@ export class Ponto {
       throw new MarcacaoInvalidaException('Saída já registrada');
     }
 
-    this._saida = new Date();
+    this._saida = Data.newDateTime();
   }
 
   private atualizarTotalHorasTrabalhadas(): void {
